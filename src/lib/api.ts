@@ -117,7 +117,35 @@ export const labApi = {
   delete: (id: number, token: string) =>
     request(`/api/v1/lab-tests/${id}`, { method: 'DELETE' }, token),
 };
+// ── Payments (admin) ──────────────────────────────────────────────────────────
+export const paymentApi = {
+  getAll: (page = 1, pageSize = 20, status?: string, email?: string, token?: string) =>
+    request(
+      `/api/Payment/transactions${buildQuery({ page, pageSize, status, email })}`,
+      {},
+      token ?? getToken() ?? undefined
+    ),
 
+  getByReference: (reference: string, token?: string) =>
+    request(`/api/Payment/transaction/${reference}`, {}, token ?? getToken() ?? undefined),
+
+  // GET /api/Payment/verify/{reference}
+  verify: (reference: string, token?: string) =>
+    request(`/api/Payment/verify/${reference}`, {}, token ?? getToken() ?? undefined),
+
+  // Receipts aren't JSON, so this bypasses request()'s res.json() and returns
+  // a blob URL the caller can window.open() or use as an <iframe>/<a> src.
+  getReceiptBlobUrl: async (reference: string, token?: string) => {
+    const authToken = token ?? getToken();
+    if (!authToken) throw new Error('Not authenticated');
+    const res = await fetch(`${BASE_URL}/api/Payment/receipt/${reference}`, {
+      headers: { Authorization: `Bearer ${authToken}` },
+    });
+    if (!res.ok) throw new Error(`Failed to fetch receipt: ${res.status}`);
+    const blob = await res.blob();
+    return URL.createObjectURL(blob);
+  },
+};
 // ── Supermarket ───────────────────────────────────────────────────────────────
 export const supermarketApi = {
   getAll: (page = 1, pageSize = 20, categoryId?: number, search?: string) =>

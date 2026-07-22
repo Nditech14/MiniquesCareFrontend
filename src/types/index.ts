@@ -6,7 +6,7 @@ export interface ApiResponse<T> {
 
 export interface PagedResult<T> {
   items: T[];
-  totalCount: number;
+  total: number;      // ✅ FIXED: was totalCount — the actual API returns "total"
   page: number;
   pageSize: number;
 }
@@ -150,6 +150,34 @@ export interface BackendCartItem {
   unitPrice: number;
   totalPrice: number;
   imageUrl?: string;
+}
+
+// ✅ FIXED: aligned to the actual TransactionResponseDto / GET /api/Payment/transactions shape
+// (was: reference, status, no items — none of which exist on the real payload)
+export interface TransactionItem {
+  productId: number;
+  productName: string;
+  productType: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+}
+
+export interface Transaction {
+  id: number;
+  transactionReference: string;
+  customerEmail: string;
+  customerPhoneNumber: string;
+  amount: number;
+  transactionStatus: 'Pending' | 'Confirmed' | 'Failed' | 'Cancelled';
+  paymentType: string;
+  referenceEntityId: number | null;
+  paystackChannel: string | null;
+  currency: string;
+  createdAt: string;
+  updatedAt: string;
+  cartId: string | null;
+  items: TransactionItem[] | null;
 }
 
 export interface BackendCart {

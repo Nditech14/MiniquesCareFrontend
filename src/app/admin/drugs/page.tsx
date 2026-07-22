@@ -57,7 +57,7 @@ export default function AdminDrugsPage() {
       const res = (await drugsApi.getAll(page, pageSize, undefined, search)) as ApiResponse<PagedResult<Drug>>;
       if (res.success) { 
         setDrugs(res.data.items); 
-        setTotalCount(res.data.totalCount); 
+        setTotalCount(res.data.total); 
       }
     } catch (error) {
       console.error('Failed to fetch drugs:', error);
