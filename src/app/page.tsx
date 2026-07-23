@@ -75,17 +75,19 @@ function Hero({ phoneNumber, about }: { phoneNumber?: string; about?: string }) 
           <div className="space-y-4">
             <div className="relative h-56 rounded-2xl overflow-hidden">
               <Image
-                src="https://res.cloudinary.com/danksdxj8/image/upload/v1774451997/african-american-pharmacist-providing-personalized-pharmacist-service-medication-guidance_v4wvab.jpg"
+                src="https://res.cloudinary.com/danksdxj8/image/upload/w_800,q_auto,f_auto/v1774451997/african-american-pharmacist-providing-personalized-pharmacist-service-medication-guidance_v4wvab.jpg"
                 alt="Pharmacy consultation"
                 fill
+                sizes="(min-width: 1024px) 50vw, 100vw"
                 className="object-cover"
               />
             </div>
             <div className="relative h-36 rounded-2xl overflow-hidden">
               <Image
-                src="https://res.cloudinary.com/danksdxj8/image/upload/v1774452275/closeup-biologist-chemist-holding-medical-test-tube-with-blood-developing-virus-treatment-biochemistry-experiment-scientist-doctor-working-healthcare-treatment-clinical-laboratory_orm7sc.jpg"
+                src="https://res.cloudinary.com/danksdxj8/image/upload/w_800,q_auto,f_auto/v1774452275/closeup-biologist-chemist-holding-medical-test-tube-with-blood-developing-virus-treatment-biochemistry-experiment-scientist-doctor-working-healthcare-treatment-clinical-laboratory_orm7sc.jpg"
                 alt="Lab test"
                 fill
+                sizes="(min-width: 1024px) 50vw, 100vw"
                 className="object-cover"
               />
             </div>
@@ -93,9 +95,10 @@ function Hero({ phoneNumber, about }: { phoneNumber?: string; about?: string }) 
           <div className="space-y-4 mt-8">
             <div className="relative h-36 rounded-2xl overflow-hidden">
               <Image
-                src="https://res.cloudinary.com/danksdxj8/image/upload/v1774451423/nappy-dcBO4nt4MRE-unsplash_cay7km.jpg"
+                src="https://res.cloudinary.com/danksdxj8/image/upload/w_800,q_auto,f_auto/v1774451423/nappy-dcBO4nt4MRE-unsplash_cay7km.jpg"
                 alt="Blood pressure check"
                 fill
+                sizes="(min-width: 1024px) 50vw, 100vw"
                 className="object-cover"
               />
             </div>
@@ -104,6 +107,7 @@ function Hero({ phoneNumber, about }: { phoneNumber?: string; about?: string }) 
                 src="https://res.cloudinary.com/danksdxj8/image/upload/v1774449575/WhatsApp_Image_2026-03-23_at_06.53.08_oigtgd.jpg"
                 alt="Supermarket items"
                 fill
+                sizes="(min-width: 1024px) 50vw, 100vw"
                 className="object-cover"
               />
             </div>

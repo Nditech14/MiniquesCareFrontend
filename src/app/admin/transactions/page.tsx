@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { paymentApi } from '@/lib/api';
 import { getToken } from '@/lib/auth';
 import type { Transaction, PagedResult } from '@/types';
@@ -18,21 +19,33 @@ const statusColors: Record<string, string> = {
 };
 
 export default function AdminTransactionsPage() {
+  const searchParams = useSearchParams();
+
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [statusFilter, setStatusFilter] = useState('');
   const [emailFilter, setEmailFilter] = useState('');
-  const [referenceFilter, setReferenceFilter] = useState('');
+  // ✅ Seed from ?reference= so links from admin emails land directly on
+  // the matching transaction instead of the full unfiltered list.
+  const [referenceFilter, setReferenceFilter] = useState(
+    () => searchParams.get('reference') ?? ''
+  );
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Transaction | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // ✅ True only when the filter was pre-filled from the URL — used to
+  // auto-open the modal once, without re-triggering on manual searches.
+  const [autoOpenFromLink, setAutoOpenFromLink] = useState(
+    () => !!searchParams.get('reference')
+  );
   const pageSize = 20;
 
-  // Reference lookup is a single-record fetch (not paginated list), so it's
-  // handled as its own branch rather than forced through GetAllAsync.
-  // API returns the raw Transaction object directly — no {success,data} wrapper.
-  const fetchByReference = useCallback(async (reference: string, token: string) => {
+  // Reference lookup hits GetOne (/api/Payment/transaction/{reference}),
+  // which is [AllowAnonymous] on the backend — so this works with or
+  // without a token. Pass it through anyway when present (harmless extra
+  // header), but never block the call on its absence.
+  const fetchByReference = useCallback(async (reference: string, token?: string) => {
     const txn = (await paymentApi.getByReference(reference, token)) as Transaction | null;
     if (!txn) {
       setTransactions([]);
@@ -42,7 +55,13 @@ export default function AdminTransactionsPage() {
     }
     setTransactions([txn]);
     setTotalCount(1);
-  }, []);
+
+    // ✅ Came in via a reference link — jump straight into the detail view.
+    if (autoOpenFromLink) {
+      setSelected(txn);
+      setAutoOpenFromLink(false);
+    }
+  }, [autoOpenFromLink]);
 
   const fetchAll = useCallback(async (token: string) => {
     // API returns { items, total, page, pageSize } directly — no wrapper.
@@ -67,16 +86,19 @@ export default function AdminTransactionsPage() {
     setError(null);
     try {
       const token = getToken();
+
+      if (referenceFilter.trim()) {
+        // ✅ Public lookup — works with or without a token.
+        await fetchByReference(referenceFilter.trim(), token ?? undefined);
+        return;
+      }
+
+      // The paginated list stays behind login.
       if (!token) {
         setError('You must be logged in to view transactions.');
         return;
       }
-
-      if (referenceFilter.trim()) {
-        await fetchByReference(referenceFilter.trim(), token);
-      } else {
-        await fetchAll(token);
-      }
+      await fetchAll(token);
     } catch (err) {
       console.error('Failed to fetch transactions:', err);
       setError('Failed to load transactions. Please try again.');
@@ -125,7 +147,7 @@ export default function AdminTransactionsPage() {
             setPage(1);
           }}
           placeholder="Search by email..."
-          className="px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white flex-1 min-w-[200px] disabled:opacity-50"
+          className="px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white flex-1 min-w-50 disabled:opacity-50"
         />
         <input
           value={referenceFilter}
@@ -134,7 +156,7 @@ export default function AdminTransactionsPage() {
             setPage(1);
           }}
           placeholder="Search by transaction reference..."
-          className="px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white flex-1 min-w-[240px]"
+          className="px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white flex-1 min-w-60"
         />
       </div>
 

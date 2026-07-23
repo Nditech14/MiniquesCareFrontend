@@ -6,7 +6,7 @@ import { getToken } from '@/lib/auth';
 import type { SupermarketProduct, Category, ApiResponse, PagedResult } from '@/types';
 import {
   AdminHeader, AdminSearch, AdminTable, Modal, Field,
-  Input, Textarea, Select, StatusBadge, DeleteConfirm, ImageUploadZone,
+  Input, Textarea, Select, StatusBadge, DeleteConfirm, Toggle, ImageUploadZone,
 } from '@/components/admin';
 import Image from 'next/image';
 
@@ -31,6 +31,7 @@ const emptyForm = {
   unit: '',
   price: 0, 
   availability: 0,
+  isSpotlight: false,
 };
 
 export default function AdminSupermarketPage() {
@@ -57,7 +58,7 @@ export default function AdminSupermarketPage() {
       const res = (await supermarketApi.getAll(page, pageSize, undefined, search)) as ApiResponse<PagedResult<SupermarketProduct>>;
       if (res.success) { 
         setProducts(res.data.items); 
-        setTotalCount(res.data.totalCount); 
+        setTotalCount(res.data.total); 
       }
     } catch (error) {
       console.error('Failed to fetch products:', error);
@@ -106,6 +107,7 @@ export default function AdminSupermarketPage() {
       unit: p.unit ?? '', 
       price: p.price ?? 0,
       availability: availabilityNumber,
+      isSpotlight: p.isSpotlight,
     });
     setModalOpen(true);
   };
@@ -134,7 +136,8 @@ export default function AdminSupermarketPage() {
         description: form.description,
         unit: form.unit,
         price: Number(form.price),
-        availability: form.availability
+        availability: form.availability,
+        isSpotlight: form.isSpotlight,
       };
       
       if (editId) {
@@ -189,13 +192,14 @@ export default function AdminSupermarketPage() {
         <div className="py-10 text-center text-gray-400 text-sm">Loading…</div>
       ) : (
         <AdminTable
-          columns={['Name', 'Brand', 'Category', 'Price', 'Availability', 'Images']}
+          columns={['Name', 'Brand', 'Category', 'Price', 'Availability', 'Spotlight', 'Images']}
           rows={filtered.map((p) => [
             p.name,
             p.brand ?? '-',
             p.categoryName ?? '-',
             `₦${p.price.toLocaleString()}`,
             <StatusBadge key="s" status={p.availability} />,
+            p.isSpotlight ? '⭐' : '-',
             <button key="img" onClick={() => { setImgProduct(p); setImgFiles([]); }} className="text-xs px-2 py-1 rounded border border-gray-200 hover:bg-gray-50">
               {p.images?.length ?? 0} img
             </button>,
@@ -303,6 +307,12 @@ export default function AdminSupermarketPage() {
             <option value="2">Discontinued</option>
           </Select>
         </Field>
+
+        <Toggle 
+          checked={form.isSpotlight} 
+          onChange={(v) => setForm({ ...form, isSpotlight: v })} 
+          label="Spotlight" 
+        />
       </Modal>
 
       {/* Image Manager */}

@@ -86,7 +86,7 @@ export default function AdminBlogsPage() {
       const res = (await blogsApi.getAll(page, pageSize, undefined, token)) as ApiResponse<PagedResult<BlogSummary>>;
       if (isMounted.current && res.success && res.data) { 
         setBlogs(res.data.items); 
-        setTotalCount(res.data.totalCount); 
+        setTotalCount(res.data.total); 
       }
     } catch (error) {
       console.error('Failed to fetch blogs:', error);

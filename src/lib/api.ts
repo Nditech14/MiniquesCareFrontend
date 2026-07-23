@@ -146,6 +146,24 @@ export const paymentApi = {
     return URL.createObjectURL(blob);
   },
 };
+
+// ── Discounts (admin) ─────────────────────────────────────────────────────────
+export const discountsApi = {
+  getAll: (token?: string) =>
+    request('/api/admin/discounts', {}, token ?? getToken() ?? undefined),
+  getActive: (token?: string) =>
+    request('/api/admin/discounts/active', {}, token ?? getToken() ?? undefined),
+  getById: (id: number, token?: string) =>
+    request(`/api/admin/discounts/${id}`, {}, token ?? getToken() ?? undefined),
+  create: (data: unknown, token: string) =>
+    request('/api/admin/discounts', { method: 'POST', body: JSON.stringify(data) }, token),
+  update: (id: number, data: unknown, token: string) =>
+    request(`/api/admin/discounts/${id}`, { method: 'PUT', body: JSON.stringify(data) }, token),
+  toggle: (id: number, isActive: boolean, token: string) =>
+    request(`/api/admin/discounts/${id}/toggle`, { method: 'PATCH', body: JSON.stringify({ isActive }) }, token),
+  delete: (id: number, token: string) =>
+    request(`/api/admin/discounts/${id}`, { method: 'DELETE' }, token),
+};
 // ── Supermarket ───────────────────────────────────────────────────────────────
 export const supermarketApi = {
   getAll: (page = 1, pageSize = 20, categoryId?: number, search?: string) =>
@@ -180,7 +198,18 @@ export const supermarketApi = {
       token
     ),
 };
-
+export const shippingApi = {
+  getAll: () => request('/api/ShippingRate/all'),
+  getById: (id: number) => request(`/api/ShippingRate/${id}`),
+  create: (data: unknown, token: string) =>
+    request('/api/ShippingRate', { method: 'POST', body: JSON.stringify(data) }, token),
+  update: (data: unknown, token: string) =>
+    request('/api/ShippingRate', { method: 'PUT', body: JSON.stringify(data) }, token),
+  delete: (id: number, token: string) =>
+    request(`/api/ShippingRate/${id}`, { method: 'DELETE' }, token),
+  calculate: (location: string) =>
+    request('/api/ShippingRate/calculate', { method: 'POST', body: JSON.stringify({ location }) }),
+};
 // ── Cart / Checkout ───────────────────────────────────────────────────────────
 // NOTE: Cart resolution no longer relies on the guest_session cookie. It is
 // driven entirely by an explicit `cartId`, obtained once from
@@ -298,12 +327,7 @@ export const cartApi = {
     request('/api/cart/checkout', { method: 'POST', body: JSON.stringify(data) }),
 };
 
-// ── Shipping Rates ────────────────────────────────────────────────────────────
-export const shippingApi = {
-  getAll: () => request('/api/ShippingRate/all'),
-  calculate: (location: string) =>
-    request('/api/ShippingRate/calculate', { method: 'POST', body: JSON.stringify({ location }) }),
-};
+
 
 // ── Orders (admin) ────────────────────────────────────────────────────────────
 // Kept for the admin dashboard's booking/payment views if you use them there.

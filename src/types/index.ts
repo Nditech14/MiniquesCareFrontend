@@ -10,6 +10,18 @@ export interface PagedResult<T> {
   page: number;
   pageSize: number;
 }
+export interface Discount {
+  id: number;
+  name: string;
+  type: 'FlatRate' | 'Percentage';
+  value: number;
+  minimumOrderAmount?: number | null;
+  startDate: string;
+  endDate: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export interface Drug {
   id: number;
@@ -22,6 +34,7 @@ export interface Drug {
   price: number;
   requiresPrescription: boolean;
   availability: 'Available' | 'OutOfStock' | 'Discontinued';
+  isSpotlight: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -51,6 +64,7 @@ export interface SupermarketProduct {
   unit: string;
   price: number;
   availability: 'Available' | 'OutOfStock' | 'Discontinued';
+  isSpotlight: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -190,6 +204,13 @@ export interface BackendCart {
     discount: number | null;
     total: number;
   };
+}
+export interface ShippingRate {
+  id: number;
+  name: string;
+  locations: string;
+  price: number;
+  isActive: boolean;
 }
 
 export type OrderType = 'Drug' | 'Supermarket';

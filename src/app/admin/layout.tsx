@@ -11,6 +11,7 @@ import {
   ShoppingBasket,
   FileText,
   Tag,
+  Percent,
   Store,
   LogOut,
   Menu,
@@ -20,6 +21,8 @@ import {
   Clock,
   ShieldAlert,
   ClipboardList,
+  Receipt,
+  Truck,
 } from 'lucide-react';
 import clsx from 'clsx';
 import { authApi } from '@/lib/api';
@@ -29,13 +32,14 @@ const IDLE_TIMEOUT_MS = 15 * 60 * 1000; // 15 minutes
 const WARN_BEFORE_MS = 60 * 1000;        // warn 1 minute before expiry
 
 const navItems = [
-  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
-  { href: '/admin/orders', label: 'Orders', icon: ClipboardList },
+  { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard, exact: true },
+  { href: '/admin/transactions', label: 'Transactions', icon: Receipt },
   { href: '/admin/drugs', label: 'Drugs', icon: Pill },
   { href: '/admin/laboratory', label: 'Lab Tests', icon: FlaskConical },
   { href: '/admin/supermarket', label: 'Supermarket', icon: ShoppingBasket },
-  { href: '/admin/blogs', label: 'Blog Posts', icon: FileText },
   { href: '/admin/categories', label: 'Categories', icon: Tag },
+  { href: '/admin/discounts', label: 'Discounts', icon: Percent },
+  { href: '/admin/shipping', label: 'Shipping', icon: Truck },
   { href: '/admin/store-info', label: 'Store Info', icon: Store },
   { href: '/admin/profile', label: 'Profile', icon: User },
 ];

@@ -31,6 +31,7 @@ const emptyForm = {
   price: 0,
   requiresPrescription: false, 
   availability: 'Available',
+  isSpotlight: false,
 };
 
 export default function AdminDrugsPage() {
@@ -99,6 +100,7 @@ export default function AdminDrugsPage() {
       price: d.price, 
       requiresPrescription: d.requiresPrescription,
       availability: d.availability, // Already a string from API
+      isSpotlight: d.isSpotlight,
     });
     setModalOpen(true);
   };
@@ -135,6 +137,7 @@ export default function AdminDrugsPage() {
         price: Number(form.price),
         requiresPrescription: form.requiresPrescription,
         availability: availabilityNumber, // Send as number
+        isSpotlight: form.isSpotlight,
       };
       
       if (editId) {
@@ -196,7 +199,7 @@ export default function AdminDrugsPage() {
         <div className="py-10 text-center text-gray-400 text-sm">Loading…</div>
       ) : (
         <AdminTable
-          columns={['Name', 'Category', 'Price', 'Unit', 'Availability', 'Rx', 'Images']}
+          columns={['Name', 'Category', 'Price', 'Unit', 'Availability', 'Rx', 'Spotlight', 'Images']}
           rows={filtered.map((d) => [
             d.name,
             d.categoryName ?? '-',
@@ -204,6 +207,7 @@ export default function AdminDrugsPage() {
             d.unit,
             <StatusBadge key="s" status={d.availability} />,
             d.requiresPrescription ? '✓' : '-',
+            d.isSpotlight ? '⭐' : '-',
             <button
               key="img"
               onClick={() => { setImgDrug(d); setImgFiles([]); }}
@@ -307,6 +311,12 @@ export default function AdminDrugsPage() {
           checked={form.requiresPrescription} 
           onChange={(v) => setForm({ ...form, requiresPrescription: v })} 
           label="Requires prescription" 
+        />
+
+        <Toggle 
+          checked={form.isSpotlight} 
+          onChange={(v) => setForm({ ...form, isSpotlight: v })} 
+          label="Spotlight" 
         />
       </Modal>
 
